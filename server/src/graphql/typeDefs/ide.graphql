@@ -1,0 +1,19 @@
+type Ide {
+  id: ID!
+  # members: [Member!]
+  content: String!
+}
+
+extend type Query {
+  allIdes: [Ide!]!
+  ide(id: ID!): Ide!
+}
+
+extend type Mutation {
+  addIde: Ide!
+  changeIde(id: ID!, content: String!): Ide!
+}
+
+extend type Subscription {
+  ideChanged(id: ID!): Ide!
+}
