@@ -1,6 +1,8 @@
 import { PubSub, withFilter } from 'apollo-server';
 import shortid from 'shortid';
 
+import { IModels } from '../../models';
+
 const pubsub = new PubSub();
 
 type Ide = {
@@ -31,9 +33,16 @@ export default {
   },
 
   Mutation: {
-    addIde: (): Ide => {
+    addIde: async (p: void, a: void, { models }: { models: IModels }): Promise<Ide> => {
       const index = ides.push({ id: shortid.generate(), content: '' });
-      console.log(ides[index - 1]);
+
+      const newIde = new models.Ide({ content: '' });
+      newIde.save(function(err: Error) {
+        if (err) console.log('asdasdasd', err);
+        // saved!
+      });
+
+      // models.ide
       return ides[index - 1];
     },
     changeIde: (parent: object, { id, content }: { id: string; content: string }): Ide => {
