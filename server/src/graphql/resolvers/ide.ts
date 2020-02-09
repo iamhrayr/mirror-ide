@@ -1,5 +1,6 @@
 import { PubSub, withFilter } from 'apollo-server';
 import shortid from 'shortid';
+import GraphQLJSON from 'graphql-type-json';
 
 import { IModels } from '../../models';
 
@@ -22,6 +23,8 @@ const ides = [
 ];
 
 export default {
+  JSON: GraphQLJSON,
+
   Query: {
     allIdes: (): Ide[] => {
       return ides;
@@ -45,13 +48,15 @@ export default {
       // models.ide
       return ides[index - 1];
     },
-    changeIde: (parent: object, { id, content }: { id: string; content: string }): Ide => {
+    changeIdeContent: (parent: object, { id, update }: { id: string; update: object }): Ide => {
       const ide: Ide = ides.find(ide => ide.id === id);
 
-      ide.content = content;
+      console.log('updateik ####', update);
 
-      pubsub.publish('IDE_CHANGED', {
-        ideChanged: ide,
+      ide.content = 'hardcoded data';
+
+      pubsub.publish('IDE_CONTENT_CHANGED', {
+        ideContentChanged: { id, update },
       });
 
       return ide;
@@ -59,11 +64,11 @@ export default {
   },
 
   Subscription: {
-    ideChanged: {
+    ideContentChanged: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator(['IDE_CHANGED']),
-        ({ ideChanged }: { ideChanged: Ide }, { id }: { id: string }) => {
-          return ideChanged.id === id;
+        () => pubsub.asyncIterator(['IDE_CONTENT_CHANGED']),
+        ({ ideContentChanged }: { ideContentChanged: Ide }, { id }: { id: string }) => {
+          return ideContentChanged.id === id;
         },
       ),
     },

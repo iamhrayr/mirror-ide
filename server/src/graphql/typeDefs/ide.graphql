@@ -1,8 +1,19 @@
+scalar JSON
+
 type Ide {
   id: ID!
   # members: [Member!]
   content: String!
 }
+
+type IdeContentUpdate {
+  changes: JSON!
+}
+
+# input changeIdeContentInput {
+#   id: ID!
+#   update: IdeContentUpdate!
+# }
 
 extend type Query {
   allIdes: [Ide!]!
@@ -11,9 +22,9 @@ extend type Query {
 
 extend type Mutation {
   addIde: Ide!
-  changeIde(id: ID!, content: String!): Ide!
+  changeIdeContent(id: ID!, update: JSON!): Ide!
 }
 
 extend type Subscription {
-  ideChanged(id: ID!): Ide!
+  ideContentChanged(id: ID!): JSON!
 }
